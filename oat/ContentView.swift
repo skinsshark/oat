@@ -7,11 +7,16 @@
 
 import CoreMotion
 import SwiftUI
-import SafariServices
-import WebKit
 
 struct ContentView: View {
     @State var angle: Double = 0.0
+    var browser = BrowserView(url:"https://google.com")
+    
+//    private func getLoadingProgress() -> Double {
+//        let progress = browser.getEstimatedProgress()
+//        if (progress == 1.0) { return 0.0 }
+//        return progress
+//    }
     
     var body: some View {
         ZStack {
@@ -23,7 +28,8 @@ struct ContentView: View {
                 Spacer()
             }
             VStack {
-                Internet(url:"https://google.com")
+                ProgressView(value: browser.getEstimatedProgress())
+                browser
                     .rotation3DEffect(
                         Angle(degrees: angle),
                         axis: (x: 1.0, y: 0.0, z: 0.0)
@@ -54,21 +60,4 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
     }
-}
-
-struct Internet: UIViewRepresentable {
-    @State var url: String
-    func makeUIView(context: UIViewRepresentableContext<Internet>) -> WKWebView {
-        guard let url = URL(string: self.url) else {
-            return WKWebView()
-        }
-        
-        let request = URLRequest(url: url)
-        let wkWebView = WKWebView()
-        wkWebView.load(request)
-        wkWebView.allowsBackForwardNavigationGestures = true
-        return wkWebView
-    }
-    
-    func updateUIView(_ uiView: WKWebView, context: UIViewRepresentableContext<Internet>) {}
 }
